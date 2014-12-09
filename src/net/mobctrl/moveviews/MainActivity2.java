@@ -2,13 +2,12 @@ package net.mobctrl.moveviews;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,30 +18,21 @@ import android.widget.TextView;
  *
  */
 @SuppressLint({ "ClickableViewAccessibility", "NewApi" })
-public class MainActivity extends Activity implements OnTouchListener {
+public class MainActivity2 extends Activity implements OnTouchListener {
 
 	private ImageView ivMove;
-	private RelativeLayout rlRoot;
+	private LinearLayout llRoot;
 	private TextView tvTips;
 	private int topTitleHeight;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		setContentView(R.layout.activity_layout);
 		ivMove = (ImageView) findViewById(R.id.iv_move);
-		rlRoot = (RelativeLayout) findViewById(R.id.rl_root);
+		llRoot = (LinearLayout) findViewById(R.id.ll_root);
 		tvTips = (TextView) findViewById(R.id.tv_tips);
-		rlRoot.setOnTouchListener(this);
-		tvTips.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(MainActivity.this,
-						MainActivity2.class);
-				startActivity(intent);
-			}
-		});
+		llRoot.setOnTouchListener(this);
 	}
 
 	@Override
@@ -54,7 +44,8 @@ public class MainActivity extends Activity implements OnTouchListener {
 			topTitleHeight = locations[1];
 			break;
 		case MotionEvent.ACTION_MOVE:
-			moveViewWithFinger(ivMove, event.getRawX(), event.getRawY());
+			moveViewByLayout(ivMove, (int) event.getRawX(),
+					(int) event.getRawY());
 			break;
 		case MotionEvent.ACTION_UP:
 			break;
@@ -63,26 +54,13 @@ public class MainActivity extends Activity implements OnTouchListener {
 	}
 
 	/**
-	 * 设置View的布局属性，使得view随着手指移动 注意：view所在的布局必须使用RelativeLayout 而且不得设置居中等样式
-	 * 
-	 * @param view
-	 * @param rawX
-	 * @param rawY
-	 */
-	private void moveViewWithFinger(View view, float rawX, float rawY) {
-		RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) view
-				.getLayoutParams();
-		params.leftMargin = (int) rawX - ivMove.getWidth() / 2;
-		params.topMargin = (int) rawY - topTitleHeight - ivMove.getHeight() / 2;
-		view.setLayoutParams(params);
-	}
-
-	/**
 	 * 通过layout方法，移动view
-	 * 
+	 * 优点：对view所在的布局，要求不苛刻，不要是RelativeLayout，而且可以修改view的大小
+	 * 并且，layout方法可以修改view的大小。
 	 * @param view
 	 * @param rawX
 	 * @param rawY
+	 * @param scale
 	 */
 	private void moveViewByLayout(View view, int rawX, int rawY, int scale) {
 		int left = rawX - ivMove.getWidth() / 2;
@@ -92,6 +70,14 @@ public class MainActivity extends Activity implements OnTouchListener {
 		view.layout(left, top, width, height);
 	}
 
+	/**
+	 * 通过layout方法，移动view 
+	 * 优点：对view所在的布局，要求不苛刻，不要是RelativeLayout，而且可以修改view的大小
+	 * 
+	 * @param view
+	 * @param rawX
+	 * @param rawY
+	 */
 	private void moveViewByLayout(View view, int rawX, int rawY) {
 		int left = rawX - ivMove.getWidth() / 2;
 		int top = rawY - topTitleHeight - ivMove.getHeight() / 2;
